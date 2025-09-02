@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
-import { Sheet, SheetContent } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useSidebar } from "@/components/ui/sidebar"
-import { Home, ShoppingBag, BarChart, Settings, HelpCircle, LogOut } from "lucide-react"
-import Link from "next/link"
+import { Sheet, SheetContent } from '@workspace/ui/components/sheet'
+import { Button } from '@workspace/ui/components/button'
+import { ScrollArea } from '@workspace/ui/components/scroll-area'
+import { useSidebar } from '@workspace/ui/components/sidebar'
+import { Home, ShoppingBag, BarChart, Settings, HelpCircle, LogOut } from 'lucide-react'
+import Link from 'next/link'
 
 const menuItems = [
-  { icon: Home, label: "Dashboard", href: "/dashboard" },
-  { icon: ShoppingBag, label: "Products", href: "/dashboard/products" },
-  { icon: BarChart, label: "Analytics", href: "/dashboard/analytics" },
-  { icon: Settings, label: "Settings", href: "/settings" },
-  { icon: HelpCircle, label: "Help", href: "/dashboard/help" },
+  { icon: Home, label: 'Dashboard', href: '/dashboard' },
+  { icon: ShoppingBag, label: 'Products', href: '/dashboard/products' },
+  { icon: BarChart, label: 'Analytics', href: '/dashboard/analytics' },
+  { icon: Settings, label: 'Settings', href: '/settings' },
+  { icon: HelpCircle, label: 'Help', href: '/dashboard/help' },
 ]
 
 export function MobileMenu() {
@@ -41,7 +41,7 @@ export function MobileMenu() {
               <div className="space-y-1">
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-red-500 hover:text-red-500 hover:bg-red-500/10"
+                  className="w-full justify-start text-red-500 hover:bg-red-500/10 hover:text-red-500"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Log out
@@ -54,4 +54,3 @@ export function MobileMenu() {
     </Sheet>
   )
 }
-
