@@ -1,10 +1,16 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card"
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select"
-import { useRouter, useSearchParams } from "next/navigation"
-import { EmptyAnalytics } from "./EmptyAnalytics"
+import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@workspace/ui/components/select'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { EmptyAnalytics } from './EmptyAnalytics'
 interface ViewStats {
   period_date: string
   views: number
@@ -18,22 +24,22 @@ interface ViewsStatsProps {
 
 export function ViewsStats({ stats, period = 'daily' }: ViewsStatsProps) {
   const router = useRouter()
-  
+
   const searchParams = useSearchParams()
 
-  if(!stats || stats.length === 0) {
+  if (!stats || stats.length === 0) {
     return <EmptyAnalytics />
   }
 
-  const sortedStats = [...stats].sort((a, b) => 
-    new Date(a.period_date).getTime() - new Date(b.period_date).getTime()
+  const sortedStats = [...stats].sort(
+    (a, b) => new Date(a.period_date).getTime() - new Date(b.period_date).getTime(),
   )
 
   const chartData = sortedStats.map((stat) => ({
     date: new Date(stat.period_date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: '2-digit'
+      year: '2-digit',
     }),
     views: stat.views,
     uniqueViews: stat.unique_views,
@@ -60,12 +66,9 @@ export function ViewsStats({ stats, period = 'daily' }: ViewsStatsProps) {
         </Select>
       </CardHeader>
       <CardContent>
-        <div className="h-[200px] mt-4">
+        <div className="mt-4 h-[200px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={chartData}
-              margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
-            >
+            <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
               <defs>
                 <linearGradient id="viewsGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#00A99D" stopOpacity={0.3} />
@@ -101,20 +104,18 @@ export function ViewsStats({ stats, period = 'daily' }: ViewsStatsProps) {
                 stroke="#00A99D"
                 strokeWidth={2}
                 fill="url(#viewsGradient)"
-                dot={{ r: 4, fill: "#00A99D", strokeWidth: 0 }}
+                dot={{ r: 4, fill: '#00A99D', strokeWidth: 0 }}
               />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="rounded-lg border bg-background p-2 shadow-sm">
+                      <div className="bg-background rounded-lg border p-2 shadow-sm">
                         <div className="flex flex-col gap-1">
-                          <span className="text-[0.70rem] text-muted-foreground">
-                            {payload[0].payload.date}
+                          <span className="text-muted-foreground text-[0.70rem]">
+                            {payload[0]?.payload.date}
                           </span>
-                          <span className="font-bold">
-                            {payload[0].value} views
-                          </span>
+                          <span className="font-bold">{payload[0]?.value} views</span>
                         </div>
                       </div>
                     )
