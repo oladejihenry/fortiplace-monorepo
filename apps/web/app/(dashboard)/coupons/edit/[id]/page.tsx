@@ -20,8 +20,9 @@ export default async function EditCouponPage({ params }: Props) {
   const { id } = await params
 
   const initialData = await getCouponById(id)
+  console.log(initialData)
 
-  if (!initialData) {
+  if (initialData.status === 404 || initialData.status === 403) {
     return notFound()
   }
 
