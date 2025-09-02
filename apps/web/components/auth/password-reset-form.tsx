@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { toast } from 'sonner'
+import { Button } from '@workspace/ui/components/button'
 import {
   Form,
   FormControl,
@@ -14,35 +14,39 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from '@workspace/ui/components/form'
+import { Input } from '@workspace/ui/components/input'
 
-import axios from "@/lib/axios"
-import { PasswordInput } from "../password-input"
-import { AxiosError } from "axios"
+import axios from '@/lib/axios'
+import { PasswordInput } from '@/components/password-input'
+import { AxiosError } from 'axios'
 
 // Form validation schema
-const resetPasswordSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string()
-    .min(8, { message: "Password must be at least 8 characters long" })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, { 
-      message: "Password must contain at least one uppercase letter, one lowercase letter, and one number" 
-    }),
-  password_confirmation: z.string(),
-}).refine(data => data.password === data.password_confirmation, {
-  message: "Passwords do not match",
-  path: ["password_confirmation"],
-})
+const resetPasswordSchema = z
+  .object({
+    email: z.string().email({ message: 'Please enter a valid email address' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters long' })
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+        message:
+          'Password must contain at least one uppercase letter, one lowercase letter, and one number',
+      }),
+    password_confirmation: z.string(),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: 'Passwords do not match',
+    path: ['password_confirmation'],
+  })
 
 type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
 
 interface PasswordResetFormProps {
-  token: string;
-  defaultEmail?: string;
+  token: string
+  defaultEmail?: string
 }
 
-export function PasswordResetForm({ token, defaultEmail = "" }: PasswordResetFormProps) {
+export function PasswordResetForm({ token, defaultEmail = '' }: PasswordResetFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -51,8 +55,8 @@ export function PasswordResetForm({ token, defaultEmail = "" }: PasswordResetFor
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       email: defaultEmail,
-      password: "",
-      password_confirmation: "",
+      password: '',
+      password_confirmation: '',
     },
   })
 
@@ -66,18 +70,18 @@ export function PasswordResetForm({ token, defaultEmail = "" }: PasswordResetFor
         ...values,
         token,
       })
-      
-      toast.success("Password reset successful")
-      
+
+      toast.success('Password reset successful')
+
       // Redirect to login page after successful reset
       setTimeout(() => {
         router.push('/login')
       }, 2000)
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || "Failed to reset password. Please try again.")
+        toast.error(error.response?.data?.message || 'Failed to reset password. Please try again.')
       } else {
-        toast.error("Failed to reset password. Please try again.")
+        toast.error('Failed to reset password. Please try again.')
       }
     } finally {
       setIsSubmitting(false)
@@ -94,10 +98,10 @@ export function PasswordResetForm({ token, defaultEmail = "" }: PasswordResetFor
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input 
-                  type="email" 
-                  placeholder="Enter your email address" 
-                  {...field} 
+                <Input
+                  type="email"
+                  placeholder="Enter your email address"
+                  {...field}
                   disabled={isSubmitting || !!defaultEmail}
                 />
               </FormControl>
@@ -139,12 +143,8 @@ export function PasswordResetForm({ token, defaultEmail = "" }: PasswordResetFor
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Resetting Password..." : "Reset Password"}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? 'Resetting Password...' : 'Reset Password'}
         </Button>
       </form>
     </Form>
