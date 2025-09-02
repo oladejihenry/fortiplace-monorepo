@@ -41,8 +41,8 @@ importers:
         specifier: ^18.0.1
         version: 18.0.1(@types/react@19.1.12)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@hookform/resolvers':
-        specifier: ^3.10.0
-        version: 3.10.0(react-hook-form@7.62.0(react@19.1.1))
+        specifier: ^5.2.1
+        version: 5.2.1(react-hook-form@7.62.0(react@19.1.1))
       '@next/third-parties':
         specifier: 15.3.2
         version: 15.3.2(next@15.4.5(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
@@ -182,7 +182,7 @@ importers:
         specifier: ^14.3.5
         version: 14.3.8(react@19.1.1)
       react-hook-form:
-        specifier: ^7.54.2
+        specifier: ^7.62.0
         version: 7.62.0(react@19.1.1)
       react-icons:
         specifier: ^5.4.0
@@ -493,11 +493,6 @@ packages:
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
-
-  '@hookform/resolvers@3.10.0':
-    resolution: {integrity: sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==}
-    peerDependencies:
-      react-hook-form: ^7.0.0
 
   '@hookform/resolvers@5.2.1':
     resolution: {integrity: sha512-u0+6X58gkjMcxur1wRWokA7XsiiBJ6aK17aPZxhkoYiK5J+HcTx0Vhu9ovXe6H+dVpO6cjrn2FkJTryXEMlryQ==}
@@ -4196,10 +4191,6 @@ snapshots:
       redux: 5.0.1
     transitivePeerDependencies:
       - '@types/react'
-
-  '@hookform/resolvers@3.10.0(react-hook-form@7.62.0(react@19.1.1))':
-    dependencies:
-      react-hook-form: 7.62.0(react@19.1.1)
 
   '@hookform/resolvers@5.2.1(react-hook-form@7.62.0(react@19.1.1))':
     dependencies:
