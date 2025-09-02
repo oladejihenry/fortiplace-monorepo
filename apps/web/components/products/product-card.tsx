@@ -1,8 +1,8 @@
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader } from '@workspace/ui/components/card'
 
-import Image from "next/image"
-import Link from "next/link"
-import { Product } from "@/types/product"
+import Image from 'next/image'
+import Link from 'next/link'
+import { Product } from '@/types/product'
 
 interface ProductCardProps {
   product: Product
@@ -12,7 +12,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="p-0">
-        <div className="aspect-video relative">
+        <div className="relative aspect-video">
           <Image
             src={product.cover_image}
             alt={product.name}
@@ -23,15 +23,12 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        <h3 className="font-semibold line-clamp-1">{product.name}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+        <h3 className="line-clamp-1 font-semibold">{product.name}</h3>
+        <p className="text-muted-foreground line-clamp-2 text-sm">{product.description}</p>
       </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between items-center">
+      <CardFooter className="flex items-center justify-between p-4 pt-0">
         <span className="font-bold">${product.price}</span>
-        <Link 
-          href={`/products/${product.id}`}
-          className="text-sm text-primary hover:underline"
-        >
+        <Link href={`/products/${product.id}`} className="text-primary text-sm hover:underline">
           View Details
         </Link>
       </CardFooter>

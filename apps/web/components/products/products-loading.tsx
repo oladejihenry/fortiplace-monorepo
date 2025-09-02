@@ -1,5 +1,5 @@
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent, CardFooter, CardHeader } from '@workspace/ui/components/card'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 
 export function ProductsLoading() {
   return (
@@ -9,11 +9,11 @@ export function ProductsLoading() {
           <CardHeader className="p-0">
             <Skeleton className="aspect-video" />
           </CardHeader>
-          <CardContent className="p-4 space-y-2">
+          <CardContent className="space-y-2 p-4">
             <Skeleton className="h-4 w-2/3" />
             <Skeleton className="h-4 w-full" />
           </CardContent>
-          <CardFooter className="p-4 pt-0 flex justify-between">
+          <CardFooter className="flex justify-between p-4 pt-0">
             <Skeleton className="h-4 w-16" />
             <Skeleton className="h-4 w-24" />
           </CardFooter>

@@ -1,13 +1,19 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
-import { Tabs,  TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { formatPrice } from "@/lib/utils"
-import { format } from "date-fns"
-import { useState } from "react"
-import axios from "@/lib/axios"
-import { LoadingSpinner } from "../custom-ui/loader"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@workspace/ui/components/card'
+import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { formatPrice } from '@/lib/utils'
+import { format } from 'date-fns'
+import { useState } from 'react'
+import axios from '@/lib/axios'
+import { LoadingSpinner } from '../custom-ui/loader'
 
 interface SaleStats {
   year: string
@@ -25,31 +31,35 @@ interface SalesChartProps {
 export function SalesChart({ monthlyStats }: SalesChartProps) {
   const [period, setPeriod] = useState<'week' | 'month' | 'year'>('month')
   const [isLoading, setIsLoading] = useState(false)
-  const [chartData, setChartData] = useState(() => monthlyStats.map((stat) => ({
-    date: `${stat.year}-${stat.month}`,
-    sales: parseFloat(stat.sales_amount),
-    earnings: parseFloat(stat.earnings),
-    commission: parseFloat(stat.total_commission),
-  })))
+  const [chartData, setChartData] = useState(() =>
+    monthlyStats.map((stat) => ({
+      date: `${stat.year}-${stat.month}`,
+      sales: parseFloat(stat.sales_amount),
+      earnings: parseFloat(stat.earnings),
+      commission: parseFloat(stat.total_commission),
+    })),
+  )
 
   const handlePeriodChange = async (newPeriod: 'week' | 'month' | 'year') => {
     try {
       setIsLoading(true)
       setPeriod(newPeriod)
-      
+
       const response = await axios.get('/api/sales/stats/', {
         params: {
-          period: newPeriod
-        }
+          period: newPeriod,
+        },
       })
-      
+
       if (response.data.stats) {
-        setChartData(response.data.stats.map((stat: SaleStats) => ({
-          date: `${stat.year}-${stat.month}`,
-          sales: parseFloat(stat.sales_amount),
-          earnings: parseFloat(stat.earnings),
-          commission: parseFloat(stat.total_commission),
-        })))
+        setChartData(
+          response.data.stats.map((stat: SaleStats) => ({
+            date: `${stat.year}-${stat.month}`,
+            sales: parseFloat(stat.sales_amount),
+            earnings: parseFloat(stat.earnings),
+            commission: parseFloat(stat.total_commission),
+          })),
+        )
       }
     } catch (error) {
       console.error('Failed to fetch period stats:', error)
@@ -65,8 +75,8 @@ export function SalesChart({ monthlyStats }: SalesChartProps) {
         <CardDescription>Your sales performance</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs 
-          defaultValue="month" 
+        <Tabs
+          defaultValue="month"
           className="space-y-4"
           onValueChange={(value) => handlePeriodChange(value as 'week' | 'month' | 'year')}
         >
@@ -75,7 +85,7 @@ export function SalesChart({ monthlyStats }: SalesChartProps) {
             <TabsTrigger value="month">This Month</TabsTrigger>
             <TabsTrigger value="year">This Year</TabsTrigger>
           </TabsList>
-          <div className="h-[300px] relative">
+          <div className="relative h-[300px]">
             {isLoading ? (
               <div className="absolute inset-0 flex items-center justify-center">
                 <LoadingSpinner />
@@ -83,8 +93,8 @@ export function SalesChart({ monthlyStats }: SalesChartProps) {
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
-                  <XAxis 
-                    dataKey="date" 
+                  <XAxis
+                    dataKey="date"
                     stroke="#888888"
                     fontSize={12}
                     tickLine={false}
@@ -113,19 +123,19 @@ export function SalesChart({ monthlyStats }: SalesChartProps) {
                   <Tooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
-                        const date = new Date(payload[0].payload.date)
+                        const date = new Date(payload[0]?.payload.date)
                         return (
-                          <div className="rounded-lg border bg-background p-2 shadow-sm">
+                          <div className="bg-background rounded-lg border p-2 shadow-sm">
                             <div className="grid gap-2">
                               <div className="flex flex-col">
-                                <span className="text-[0.70rem] uppercase text-muted-foreground">
+                                <span className="text-muted-foreground text-[0.70rem] uppercase">
                                   {format(date, period === 'week' ? 'EEEE' : 'MMMM dd, yyyy')}
                                 </span>
                                 <span className="font-bold">
-                                  Sales: {formatPrice(payload[0].value as number, 'NGN')}
+                                  Sales: {formatPrice(payload[0]?.value as number, 'NGN')}
                                 </span>
                                 <span className="font-bold">
-                                  Earnings: {formatPrice(payload[1].value as number, 'NGN')}
+                                  Earnings: {formatPrice(payload[1]?.value as number, 'NGN')}
                                 </span>
                               </div>
                             </div>
