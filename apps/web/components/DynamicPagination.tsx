@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@workspace/ui/components/button'
 
 interface DynamicPaginationProps {
   currentPage: number
@@ -15,20 +15,20 @@ export function DynamicPagination({
   totalItems,
   itemsPerPage,
   onPageChange,
-  startIndex
+  startIndex,
 }: DynamicPaginationProps) {
   const totalPages = Math.ceil(totalItems / itemsPerPage)
 
-//   if (totalPages <= 1) return null
+  //   if (totalPages <= 1) return null
 
   return (
     <div className="flex items-center justify-between px-8 py-4">
-      <div className="text-sm text-muted-foreground">
-        Showing <span className="font-medium">{totalItems > 0 ? startIndex + 1 : 0}</span> to{" "}
-        <span className="font-medium">{Math.min(startIndex + itemsPerPage, totalItems)}</span> of{" "}
+      <div className="text-muted-foreground text-sm">
+        Showing <span className="font-medium">{totalItems > 0 ? startIndex + 1 : 0}</span> to{' '}
+        <span className="font-medium">{Math.min(startIndex + itemsPerPage, totalItems)}</span> of{' '}
         <span className="font-medium">{totalItems}</span> items
       </div>
-      
+
       <div className="flex items-center space-x-2">
         <Button
           variant="outline"
@@ -52,22 +52,22 @@ export function DynamicPagination({
           </svg>
           <span className="sr-only">Previous Page</span>
         </Button>
-        
+
         {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-          const pageNumber = i + 1;
+          const pageNumber = i + 1
           return (
             <Button
               key={pageNumber}
-              variant={currentPage === pageNumber ? "default" : "outline"}
+              variant={currentPage === pageNumber ? 'default' : 'outline'}
               size="sm"
               onClick={() => onPageChange(pageNumber)}
-              className="w-8 h-8 p-0"
+              className="h-8 w-8 p-0"
             >
               {pageNumber}
             </Button>
-          );
+          )
         })}
-        
+
         <Button
           variant="outline"
           size="sm"
