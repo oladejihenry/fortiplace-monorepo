@@ -1,10 +1,18 @@
-import { Inter } from "next/font/google"
-import "@workspace/ui/globals.css"
-import type React from "react"
-import { Analytics } from '@vercel/analytics/next';
-import { Providers } from "@/components/providers"
+import { Geist, Geist_Mono } from 'next/font/google'
+import '@workspace/ui/globals.css'
+import type React from 'react'
+import { Analytics } from '@vercel/analytics/next'
+import { Providers } from '@/components/providers'
 
-const inter = Inter({ subsets: ["latin"] })
+const fontSans = Geist({
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
+
+const fontMono = Geist_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+})
 
 export default function RootLayout({
   children,
@@ -13,13 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={fontSans.className}>
         <Analytics />
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
 }
-
