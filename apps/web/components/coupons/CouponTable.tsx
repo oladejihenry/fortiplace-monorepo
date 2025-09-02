@@ -12,15 +12,14 @@ import {
 } from '@workspace/ui/components/table'
 import { Badge } from '@workspace/ui/components/badge'
 import { Check, Copy, Edit, Trash2 } from 'lucide-react'
-import { useCoupons } from '@/hooks/useCoupons'
 import { Coupon } from '@/types/coupons'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { deleteCoupon } from '@/lib/action/coupons'
+import { EmptyCoupons } from './EmptyCoupons'
 
-export function CouponTable() {
-  const { data: coupons } = useCoupons()
+export function CouponTable({ coupons }: { coupons: { coupons: Coupon[] } }) {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const router = useRouter()
   const getStatusBadge = (status: string) => {
@@ -54,7 +53,6 @@ export function CouponTable() {
   const handleDelete = async (id: string) => {
     try {
       const response = await deleteCoupon(id)
-      console.log(response)
       if (response.status === 200) {
         toast.success('Coupon deleted successfully')
         router.refresh()
@@ -63,8 +61,12 @@ export function CouponTable() {
       }
     } catch (error) {
       toast.error('Failed to delete coupon')
-      // router.refresh()
+      router.refresh()
     }
+  }
+
+  if (coupons.coupons.length === 0) {
+    return <EmptyCoupons />
   }
 
   return (
@@ -81,7 +83,7 @@ export function CouponTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {coupons?.map((coupon: Coupon) => (
+          {coupons.coupons?.map((coupon: Coupon) => (
             <TableRow key={coupon.id}>
               <TableCell className="font-medium">{coupon.code}</TableCell>
               <TableCell className="hidden capitalize md:table-cell">{coupon.type}</TableCell>

@@ -60,3 +60,18 @@ export const deleteCoupon = async (id: string) => {
   const data = await response.json()
   return data
 }
+
+export const getCoupons = async () => {
+  const headers = await getAuthHeaders()
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/coupons`, {
+    headers,
+  })
+  if (!response.ok) {
+    return {
+      success: false,
+      message: 'Failed to fetch coupons',
+    }
+  }
+  const data = await response.json()
+  return data
+}

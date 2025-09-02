@@ -3,6 +3,7 @@ import { Metadata } from 'next'
 import { getCouponById } from '@/lib/action/coupons'
 import { Suspense } from 'react'
 import { LoadingSpinner } from '@/components/custom-ui/loader'
+import { notFound } from 'next/navigation'
 
 type Props = {
   params: Promise<{
@@ -19,6 +20,10 @@ export default async function EditCouponPage({ params }: Props) {
   const { id } = await params
 
   const initialData = await getCouponById(id)
+
+  if (!initialData) {
+    return notFound()
+  }
 
   return (
     <div className="flex-1 space-y-6 p-6 lg:p-8">
