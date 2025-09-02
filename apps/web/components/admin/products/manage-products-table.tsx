@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -8,13 +8,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from '@workspace/ui/components/table'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@workspace/ui/components/dropdown-menu'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,167 +25,171 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { MoreHorizontal, Trash, Eye, EyeClosed, ExternalLink, ImageIcon } from "lucide-react"
-import { toast } from "sonner"
-import axios from "@/lib/axios"
-import { AxiosError } from "axios"
-import { parseAsString } from "nuqs"
-import { useQueryState } from "nuqs"
-import Image from "next/image"
-import { formatDate } from "@/lib/utils"
+} from '@workspace/ui/components/alert-dialog'
+import { Button } from '@workspace/ui/components/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { MoreHorizontal, Trash, Eye, EyeClosed, ExternalLink, ImageIcon } from 'lucide-react'
+import { toast } from 'sonner'
+import axios from '@/lib/axios'
+import { AxiosError } from 'axios'
+import { parseAsString } from 'nuqs'
+import { useQueryState } from 'nuqs'
+import Image from 'next/image'
+import { formatDate } from '@/lib/utils'
 // Define the type for creator (user) data
 interface CreatorData {
-  id: string;
-  username: string;
-  email: string;
-  subdomain: string;
-  store_url: string;
+  id: string
+  username: string
+  email: string
+  subdomain: string
+  store_url: string
 }
 
 // Define the type for individual product based on API response
 interface ProductData {
-  id: string;
-  product_id: string;
-  name: string;
-  description: string;
-  content: string;
-  price: string;
-  cover_image: string;
-  preview_images: string | null;
-  product_file: string;
-  product_url: string;
-  product_type: string;
-  is_published: boolean;
+  id: string
+  product_id: string
+  name: string
+  description: string
+  content: string
+  price: string
+  cover_image: string
+  preview_images: string | null
+  product_file: string
+  product_url: string
+  product_type: string
+  is_published: boolean
   metadata: {
-    currency: string;
-    callToAction: string;
-  };
-  creator: CreatorData;
-  created_at: string;
-  updated_at: string;
-  version: number;
-  banned?: boolean;
-  ban_reason?: string;
-  banned_at?: string;
+    currency: string
+    callToAction: string
+  }
+  creator: CreatorData
+  created_at: string
+  updated_at: string
+  version: number
+  banned?: boolean
+  ban_reason?: string
+  banned_at?: string
 }
 
-
-
 export function ManageProductsTable() {
-  const [products, setProducts] = useState<ProductData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [search] = useQueryState('search', parseAsString.withDefault(''));
-  const [productToDelete, setProductToDelete] = useState<string | null>(null);
-  
+  const [products, setProducts] = useState<ProductData[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [search] = useQueryState('search', parseAsString.withDefault(''))
+  const [productToDelete, setProductToDelete] = useState<string | null>(null)
+
   // Fetch products
   const fetchProducts = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const response = await axios.get('/api/admin/products');
-      setProducts(response.data.data || []);
+      const response = await axios.get('/api/admin/products')
+      setProducts(response.data.data || [])
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message)
         throw error.response?.data
       }
-      toast.error("Failed to load products");
+      toast.error('Failed to load products')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
-  
+    fetchProducts()
+  }, [])
+
   // Sort products: most recent first
   const sortedProducts = [...products].sort((a, b) => {
     // Sort by created date, newest first
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
-  
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
+
   // Filter products based on search
-  const filteredProducts = sortedProducts.filter((product) => 
-    (product.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
-    (product.description?.toLowerCase() || '').includes(search.toLowerCase()) ||
-    (product.creator?.username?.toLowerCase() || '').includes(search.toLowerCase())
-  );
+  const filteredProducts = sortedProducts.filter(
+    (product) =>
+      (product.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (product.description?.toLowerCase() || '').includes(search.toLowerCase()) ||
+      (product.creator?.username?.toLowerCase() || '').includes(search.toLowerCase()),
+  )
 
   useEffect(() => {
-    setPage(1);
-  }, [search]);
-  
+    setPage(1)
+  }, [search])
+
   // Paginate products
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const startIndex = (page - 1) * itemsPerPage;
-  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  const itemsPerPage = 10
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+  const startIndex = (page - 1) * itemsPerPage
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage)
 
   const handlePublishToggle = async (productId: string, isCurrentlyPublished: boolean) => {
     try {
-      const response = await axios.put(`/api/admin/products/${productId}/status`, { 
-        is_published: !isCurrentlyPublished 
-      });
-      toast.success(response.data.message || `Product ${isCurrentlyPublished ? 'unpublished' : 'published'} successfully`);
-      fetchProducts();
+      const response = await axios.put(`/api/admin/products/${productId}/status`, {
+        is_published: !isCurrentlyPublished,
+      })
+      toast.success(
+        response.data.message ||
+          `Product ${isCurrentlyPublished ? 'unpublished' : 'published'} successfully`,
+      )
+      fetchProducts()
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 403) {
-          toast.error(error.response.data.message || "You are not authorized to update this product's status");
+          toast.error(
+            error.response.data.message || "You are not authorized to update this product's status",
+          )
         } else {
-          toast.error(error.response?.data.message || "Failed to update product status");
+          toast.error(error.response?.data.message || 'Failed to update product status')
         }
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error('An unexpected error occurred')
       }
     }
-  };
-
+  }
 
   const handleDeleteProduct = async (productId: string) => {
     try {
-      const response = await axios.delete(`/api/admin/products/${productId}`);
-      setProductToDelete(null);
-      toast.success(response.data.message || "Product deleted successfully");
-      fetchProducts();
+      const response = await axios.delete(`/api/admin/products/${productId}`)
+      setProductToDelete(null)
+      toast.success(response.data.message || 'Product deleted successfully')
+      fetchProducts()
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message || "Failed to delete product");
+        toast.error(error.response?.data.message || 'Failed to delete product')
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error('An unexpected error occurred')
       }
     }
-  };
+  }
 
   // Format currency
   const formatCurrency = (amount: string) => {
-    const numericAmount = parseFloat(amount);
-    if (isNaN(numericAmount)) return "₦0";
-    
+    const numericAmount = parseFloat(amount)
+    if (isNaN(numericAmount)) return '₦0'
+
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
       currency: 'NGN',
-      minimumFractionDigits: 0
-    }).format(numericAmount);
-  };
+      minimumFractionDigits: 0,
+    }).format(numericAmount)
+  }
 
   // Check if product is banned
   const isBanned = (product: ProductData): boolean => {
-    return product.banned === true;
-  };
+    return product.banned === true
+  }
 
   const handleViewProduct = (product: ProductData) => {
-
     const subdomain = product.creator.subdomain
     const maindomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN
     const production = process.env.NODE_ENV === 'production'
-    const url = production ? `https://${subdomain}.${maindomain}/product/${product.product_id}` : `http://${subdomain}.localhost:3000/product/${product.product_id}`
+    const url = production
+      ? `https://${subdomain}.${maindomain}/product/${product.product_id}`
+      : `http://${subdomain}.localhost:3000/product/${product.product_id}`
     window.open(url, '_blank')
-  };
+  }
 
   if (isLoading) {
     return (
@@ -194,7 +198,7 @@ export function ManageProductsTable() {
           <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -202,7 +206,7 @@ export function ManageProductsTable() {
       <Table>
         <TableHeader className="bg-muted/50">
           <TableRow className="hover:bg-transparent">
-            <TableHead className="w-[100px] hidden md:table-cell"></TableHead>
+            <TableHead className="hidden w-[100px] md:table-cell"></TableHead>
             <TableHead className="w-[300px]">Product</TableHead>
             <TableHead className="hidden md:table-cell">Creator</TableHead>
             <TableHead className="hidden md:table-cell">Price</TableHead>
@@ -218,17 +222,17 @@ export function ManageProductsTable() {
               <TableRow key={product.id} className="hover:bg-muted/50">
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <div className="h-14 w-14 rounded-md bg-muted flex items-center justify-center overflow-hidden">
+                    <div className="bg-muted flex h-14 w-14 items-center justify-center overflow-hidden rounded-md">
                       {product.cover_image ? (
-                        <Image 
-                          src={product.cover_image} 
+                        <Image
+                          src={product.cover_image}
                           alt={product.name}
                           width={250}
                           height={250}
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                        <ImageIcon className="text-muted-foreground h-6 w-6" />
                       )}
                     </div>
                   </div>
@@ -241,9 +245,9 @@ export function ManageProductsTable() {
                 <TableCell className="hidden md:table-cell">
                   <div className="flex flex-col">
                     <span>{product.creator.username}</span>
-                    <a 
-                      href={product.creator.store_url} 
-                      target="_blank" 
+                    <a
+                      href={product.creator.store_url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-blue-600 hover:underline"
                     >
@@ -261,18 +265,20 @@ export function ManageProductsTable() {
                     <span>{formatDate(product.created_at)}</span>
                   </div>
                 </TableCell>
-                <TableCell className="hidden md:table-cell capitalize">
+                <TableCell className="hidden capitalize md:table-cell">
                   {product.product_type.replace('_', ' ')}
                 </TableCell>
                 <TableCell>
                   <Badge
                     variant={
-                      isBanned(product) ? "destructive" :
-                      product.is_published ? "default" : "secondary"
+                      isBanned(product)
+                        ? 'destructive'
+                        : product.is_published
+                          ? 'default'
+                          : 'secondary'
                     }
                   >
-                    {isBanned(product) ? "Banned" : 
-                     product.is_published ? "Published" : "Draft"}
+                    {isBanned(product) ? 'Banned' : product.is_published ? 'Published' : 'Draft'}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
@@ -293,7 +299,9 @@ export function ManageProductsTable() {
                       </DropdownMenuItem>
                       {!isBanned(product) && (
                         <DropdownMenuItem
-                          onClick={() => handlePublishToggle(product.product_id, product.is_published)}
+                          onClick={() =>
+                            handlePublishToggle(product.product_id, product.is_published)
+                          }
                           className="cursor-pointer"
                         >
                           {product.is_published ? (
@@ -301,11 +309,7 @@ export function ManageProductsTable() {
                           ) : (
                             <Eye className="mr-2 h-4 w-4" />
                           )}
-                          {product.is_published ? (
-                            <span>Unpublish</span>
-                          ) : (
-                            <span>Publish</span>
-                          )}
+                          {product.is_published ? <span>Unpublish</span> : <span>Publish</span>}
                         </DropdownMenuItem>
                       )}
                       <hr className="my-1" />
@@ -313,10 +317,10 @@ export function ManageProductsTable() {
                         <AlertDialogTrigger asChild>
                           <DropdownMenuItem
                             onSelect={(e) => {
-                              e.preventDefault();
-                              setProductToDelete(product.product_id);
+                              e.preventDefault()
+                              setProductToDelete(product.product_id)
                             }}
-                            className="cursor-pointer text-destructive focus:text-destructive"
+                            className="text-destructive focus:text-destructive cursor-pointer"
                           >
                             <Trash className="mr-2 h-4 w-4" />
                             <span>Delete Product</span>
@@ -333,7 +337,9 @@ export function ManageProductsTable() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => productToDelete && handleDeleteProduct(productToDelete)}
+                              onClick={() =>
+                                productToDelete && handleDeleteProduct(productToDelete)
+                              }
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
                               Delete
@@ -358,17 +364,21 @@ export function ManageProductsTable() {
 
       {/* Pagination */}
       <div className="flex items-center justify-between px-2 py-4">
-        <div className="text-sm text-muted-foreground">
-          Showing <span className="font-medium">{paginatedProducts.length > 0 ? startIndex + 1 : 0}</span> to{" "}
-          <span className="font-medium">{Math.min(startIndex + itemsPerPage, filteredProducts.length)}</span> of{" "}
-          <span className="font-medium">{filteredProducts.length}</span> products
+        <div className="text-muted-foreground text-sm">
+          Showing{' '}
+          <span className="font-medium">{paginatedProducts.length > 0 ? startIndex + 1 : 0}</span>{' '}
+          to{' '}
+          <span className="font-medium">
+            {Math.min(startIndex + itemsPerPage, filteredProducts.length)}
+          </span>{' '}
+          of <span className="font-medium">{filteredProducts.length}</span> products
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage(page => Math.max(1, page - 1))}
+            onClick={() => setPage((page) => Math.max(1, page - 1))}
             disabled={page <= 1}
           >
             <svg
@@ -387,26 +397,26 @@ export function ManageProductsTable() {
             </svg>
             <span className="sr-only">Previous Page</span>
           </Button>
-          
+
           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-            const pageNumber = i + 1;
+            const pageNumber = i + 1
             return (
               <Button
                 key={pageNumber}
-                variant={page === pageNumber ? "default" : "outline"}
+                variant={page === pageNumber ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setPage(pageNumber)}
-                className="w-8 h-8 p-0"
+                className="h-8 w-8 p-0"
               >
                 {pageNumber}
               </Button>
-            );
+            )
           })}
-          
+
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage(page => Math.min(totalPages, page + 1))}
+            onClick={() => setPage((page) => Math.min(totalPages, page + 1))}
             disabled={page >= totalPages}
           >
             <svg
@@ -428,5 +438,5 @@ export function ManageProductsTable() {
         </div>
       </div>
     </div>
-  );
+  )
 }
