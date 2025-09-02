@@ -1,0 +1,14 @@
+[variables]
+	UPLOAD_MAX_FILESIZE = '100M'
+	POST_MAX_SIZE = '100M'
+    CLIENT_MAX_BODY_SIZE = '100M'
+
+[phases.setup]
+	cmds = [
+        # Find the PHP ini location dynamically and update it
+        'UPLOAD_INI_PATH=$(find /nix/store/*-php-*/lib -name "php.ini" -print0 | head -z -n 1); if [ -n "$UPLOAD_INI_PATH" ]; then echo "upload_max_filesize=${UPLOAD_MAX_FILESIZE};" >> "$UPLOAD_INI_PATH"; echo "post_max_size=${POST_MAX_SIZE};" >> "$UPLOAD_INI_PATH"; fi',
+        
+        # Create a custom Nginx config for upload limits
+        'mkdir -p /var/task/nginx/conf.d/',
+        'echo "client_max_body_size ${CLIENT_MAX_BODY_SIZE};" > /var/task/nginx/conf.d/upload_limits.conf'
+    ]

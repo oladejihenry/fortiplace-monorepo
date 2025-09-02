@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'reserved' => [
+        'admin',
+        'administrator',
+        'system',
+        'mod',
+        'moderator',
+        'support',
+        'help',
+        'info',
+        'contact',
+        'faq',
+        'staff',
+        'support',
+        'root',
+        'test',
+        'testing',
+        'demo',
+        'example',
+        'guest',
+        'user',
+        'api',
+        'dev',
+        'developer',
+        'design',
+        'designer',
+        'marketing',
+        'sales',
+        'm',
+    ],
+];
