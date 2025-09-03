@@ -1,21 +1,19 @@
-"use client"
+'use client'
 
-import { Button } from "@workspace/ui/components/button"
-import { Badge } from "@workspace/ui/components/badge"
-import { formatPrice, getPriceForCurrency } from "@/lib/utils"
-import { toast } from "sonner"
-import { Skeleton } from "@workspace/ui/components/skeleton"
-import Image from "next/image"
-import Link from "next/link"
-import { CallToAction } from "@/types/product"
-import { useCartStore } from "@/store/use-cart-store"
-import { useCurrencyStore } from "@/store/use-currency-store"
-import { Price } from "@/types"
-import { Rating } from "../rating"
-import { useRating } from "@/hooks/use-rating"
-import { notFound } from "next/navigation"
-import { SocialShare } from "./social-share"
-
+import { Button } from '@workspace/ui/components/button'
+import { Badge } from '@workspace/ui/components/badge'
+import { formatPrice, getPriceForCurrency } from '@/lib/utils'
+import { toast } from 'sonner'
+import { Skeleton } from '@workspace/ui/components/skeleton'
+import Image from 'next/image'
+import Link from 'next/link'
+import { CallToAction } from '@/types/product'
+import { useCartStore } from '@/store/use-cart-store'
+import { useCurrencyStore } from '@/store/use-currency-store'
+import { Price } from '@/types'
+import { notFound } from 'next/navigation'
+import { SocialShare } from './social-share'
+import { DisplayRating } from '../DisplayRating'
 
 interface ProductData {
   id: string
@@ -56,7 +54,7 @@ interface ProductViewProps {
 }
 
 export function ProductView({ product }: ProductViewProps) {
-  if(product.error === true) {
+  if (product.error === true) {
     notFound()
   }
   const addItem = useCartStore((state) => state.addItem)
@@ -77,36 +75,40 @@ export function ProductView({ product }: ProductViewProps) {
         quantity: 1,
         creator: {
           username: product.data.creator?.username || '',
-          email: product.data.creator?.email || ''
+          email: product.data.creator?.email || '',
         },
-        prices: product.data.prices || []
+        prices: product.data.prices || [],
       })
-     toast.success("Item added to cart")
+      toast.success('Item added to cart')
     } finally {
       setIsLoading(false)
     }
   }
 
   const callToAction = product.data?.metadata?.callToAction
-  const callToActionText = callToAction === CallToAction.BUY_NOW ? "Buy Now" : callToAction === CallToAction.I_WANT_THIS ? "I Want This" : "Pay Now"
-
-  const { handleRate } = useRating(product.data.product_id)
+  const callToActionText =
+    callToAction === CallToAction.BUY_NOW
+      ? 'Buy Now'
+      : callToAction === CallToAction.I_WANT_THIS
+        ? 'I Want This'
+        : 'Pay Now'
 
   // Calculate average rating
-  const averageRating = product.data.ratings && product.data.ratings.length > 0 ? 
-    (product.data.ratings.reduce((acc, rating) => acc + rating.rating, 0) / product.data.ratings.length).toFixed(1) : 
-    "0.0"
+  const averageRating =
+    product.data.ratings && product.data.ratings.length > 0
+      ? (
+          product.data.ratings.reduce((acc, rating) => acc + rating.rating, 0) /
+          product.data.ratings.length
+        ).toFixed(1)
+      : '0.0'
 
-    // Get ratings count
+  // Get ratings count
   const ratingsCount = product.data.ratings?.length || 0
 
-  // Get user rating if exists (you'll need to implement session_id check)
-  const userRating = product.data.ratings?.find(r => r.session_id === "current_session_id")?.rating
-
   return (
-    <div className="mt-10 mb-10">
+    <div className="mb-10 mt-10">
       {/* Hero Banner Section */}
-      <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden bg-black">
+      <div className="relative h-[300px] w-full overflow-hidden bg-black md:h-[400px]">
         <Image
           src={product.data?.cover_image}
           alt={product.data?.name}
@@ -116,8 +118,8 @@ export function ProductView({ product }: ProductViewProps) {
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent" />
-        
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 space-y-4">
+
+        <div className="absolute bottom-0 left-0 right-0 space-y-4 p-6 md:p-8">
           <div className="flex items-center gap-3">
             {product.data.creator && (
               <Link href="#" className="flex items-center gap-2">
@@ -128,17 +130,19 @@ export function ProductView({ product }: ProductViewProps) {
                   height={24}
                   className="rounded-full"
                 /> */}
-                <span className="text-white text-sm capitalize">{product.data.creator.username}</span>
+                <span className="text-sm capitalize text-white">
+                  {product.data.creator.username}
+                </span>
               </Link>
             )}
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white max-w-2xl">
+          <h1 className="max-w-2xl text-3xl font-bold text-white md:text-4xl">
             {product.data?.name}
           </h1>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row border ">
+      <div className="flex flex-col border lg:flex-row">
         {/* Main Content */}
         <div className="flex-1 p-6 md:p-8 lg:pr-8">
           <div className="prose prose-sm dark:prose-invert max-w-none">
@@ -148,36 +152,42 @@ export function ProductView({ product }: ProductViewProps) {
         </div>
 
         {/* Sidebar */}
-        <div className="lg:w-[380px] space-y-6 border-l ">
+        <div className="space-y-6 border-l lg:w-[380px]">
           <div className="sticky top-4">
-            <div className="rounded-lg  p-6 space-y-6">
+            <div className="space-y-6 rounded-lg p-6">
               <div className="flex flex-col">
                 {product.data.slashed_price && product.data.slashed_price > 0 ? (
-                  <div className="flex flex-col gap-0.5 mt-1">
-                    <Badge className="bg-[#00A99D] hover:bg-[#00A99D]/80 text-white w-fit">
-                      {formatPrice(getPriceForCurrency(product.data.prices, selectedCurrency), selectedCurrency)}
+                  <div className="mt-1 flex flex-col gap-0.5">
+                    <Badge className="w-fit bg-[#00A99D] text-white hover:bg-[#00A99D]/80">
+                      {formatPrice(
+                        getPriceForCurrency(product.data.prices, selectedCurrency),
+                        selectedCurrency,
+                      )}
                     </Badge>
-                    <span className="text-sm text-muted-foreground line-through">
+                    <span className="text-muted-foreground text-sm line-through">
                       {formatPrice(product.data.slashed_price, selectedCurrency)}
                     </span>
                   </div>
                 ) : (
-                  <Badge className="bg-[#00A99D] hover:bg-[#00A99D]/80 text-white w-fit mt-1">
-                    {formatPrice(getPriceForCurrency(product.data.prices, selectedCurrency), selectedCurrency)}
+                  <Badge className="mt-1 w-fit bg-[#00A99D] text-white hover:bg-[#00A99D]/80">
+                    {formatPrice(
+                      getPriceForCurrency(product.data.prices, selectedCurrency),
+                      selectedCurrency,
+                    )}
                   </Badge>
                 )}
               </div>
 
-              <Button 
-                size="lg" 
-                className="w-full bg-[#00A99D] hover:bg-[#00A99D]/90 text-white h-14 text-lg"
+              <Button
+                size="lg"
+                className="h-14 w-full bg-[#00A99D] text-lg text-white hover:bg-[#00A99D]/90"
                 onClick={handleAddToCart}
                 disabled={isLoading}
               >
-                {isLoading ? "Processing..." : `${callToActionText}`}
+                {isLoading ? 'Processing...' : `${callToActionText}`}
               </Button>
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="text-muted-foreground flex items-center gap-2 text-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -194,32 +204,21 @@ export function ProductView({ product }: ProductViewProps) {
                 Check your email after purchase
               </div>
 
-              <div className="space-y-4 pt-4 border-t">
+              <div className="space-y-4 border-t pt-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Rating 
-                      value={Number(averageRating)}
-                      onRate={handleRate}
-                      userRating={userRating}
-                    />
-                    <span className="text-sm font-medium">
-                      {averageRating}
-                    </span>
+                    <DisplayRating value={Number(averageRating)} />
+                    <span className="text-sm font-medium">{averageRating}</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-muted-foreground text-sm">
                     {ratingsCount} {ratingsCount === 1 ? 'rating' : 'ratings'}
                   </span>
                 </div>
-                {userRating && (
-                  <p className="text-sm text-muted-foreground">
-                    You rated this {userRating} stars
-                  </p>
-                )}
               </div>
 
               <SocialShare product={product.data} />
 
-              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-4 border-t">
+              <div className="text-muted-foreground flex items-center justify-center gap-2 border-t pt-4 text-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -240,14 +239,13 @@ export function ProductView({ product }: ProductViewProps) {
       </div>
     </div>
   )
-
 }
 
 ProductView.Skeleton = function ProductViewSkeleton() {
   return (
-    <div className="max-w-7xl mx-auto">
-      <Skeleton className="w-full h-[300px] md:h-[400px]" />
-      <div className="px-4 py-8 md:px-8 max-w-4xl mx-auto space-y-8">
+    <div className="mx-auto max-w-7xl">
+      <Skeleton className="h-[300px] w-full md:h-[400px]" />
+      <div className="mx-auto max-w-4xl space-y-8 px-4 py-8 md:px-8">
         <div className="space-y-4">
           <Skeleton className="h-14 w-full" />
           <div className="flex justify-between gap-4">
@@ -266,7 +264,7 @@ ProductView.Skeleton = function ProductViewSkeleton() {
             <Skeleton className="h-4 w-4/6" />
           </div>
         </div>
-        <Skeleton className="h-4 w-48 mx-auto" />
+        <Skeleton className="mx-auto h-4 w-48" />
       </div>
     </div>
   )

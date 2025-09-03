@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Rating;
 use Illuminate\Support\Facades\Storage;
 use Aws\Exception\AwsException;
 use Aws\S3\S3Client;
@@ -64,11 +65,14 @@ class ProductDownloadController extends Controller
                     $product = $item->product;
                     return [
                         'id' => $product->id,
+                        'product_id' => $product->product_id,
                         'name' => $product->name,
                         'description' => $product->description,
                         'product_type' => $product->product_type,
                         'file_name' => $product->activeFile?->original_name,
                         'view_product_online' => $product->view_product_online,
+                        'rating' => $product->ratings->avg('rating'),
+                        'ratings' => $product->ratings,
                         'download_url' => route('downloads.file', [
                             'order_id' => $item->order_id,
                             'product_id' => $item->product_id,

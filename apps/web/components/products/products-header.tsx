@@ -31,7 +31,7 @@ export function ProductsHeader() {
           <h2 className="text-2xl font-bold tracking-tight">
             {isNewProductPage ? 'Create New Product' : 'Products'}
           </h2>
-          {!isNewProductPage && productsCount && (
+          {!isNewProductPage && typeof productsCount === 'number' && (
             <span className="bg-muted relative box-border inline-flex h-8 items-center rounded-full px-2 text-sm font-medium">
               {productsCount}
             </span>
