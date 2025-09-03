@@ -2,20 +2,18 @@
 
 import { parseAsString, useQueryState } from 'nuqs'
 import { Input } from '@workspace/ui/components/input'
-import { useCustomerOrder } from '@/hooks/useCustomerOrder'
 import { Plus } from 'lucide-react'
 import { Button } from '@workspace/ui/components/button'
-// import { DiscountModal } from './DiscountModal'
-// import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useCoupons } from '@/hooks/useCoupons'
 
 export function CouponHeader() {
   const [search, setSearch] = useQueryState('search', parseAsString.withDefault(''))
-  // const [isModalOpen, setIsModalOpen] = useState(false)
   const router = useRouter()
-  const { data: orders } = useCustomerOrder()
+  const { data: orders } = useCoupons()
+
   // Get total count from pagination metadata
-  const totalOrders = orders?.meta?.total || 0
+  const totalCoupons = orders?.length || 0
 
   const handleNewCoupon = () => {
     router.push('/coupons/create')
@@ -26,6 +24,9 @@ export function CouponHeader() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight">Coupons</h1>
+          <span className="bg-muted relative box-border inline-flex h-8 items-center rounded-full px-2 text-sm font-medium">
+            {totalCoupons}
+          </span>
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <Input
@@ -40,7 +41,6 @@ export function CouponHeader() {
           </Button>
         </div>
       </div>
-      {/* <DiscountModal open={isModalOpen} onOpenChange={setIsModalOpen} /> */}
     </>
   )
 }

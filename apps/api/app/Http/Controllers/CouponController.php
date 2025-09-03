@@ -26,14 +26,6 @@ class CouponController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
 
     public function store(CouponRequest $request)
     {
@@ -50,9 +42,7 @@ class CouponController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(Request $request, Coupon $coupon)
     {
         $user = $request->user();
@@ -65,17 +55,8 @@ class CouponController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Coupon $coupon)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(UpdateCouponRequest $request, Coupon $coupon)
     {
         if ($coupon->creator_id !== $request->user()->id) {
@@ -100,9 +81,7 @@ class CouponController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Coupon $coupon)
     {
         $coupon->delete();
